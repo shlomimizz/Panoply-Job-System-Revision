@@ -43,25 +43,6 @@ public class JobSystem {
         }).start();
     }
 
-
-    private static class MyCallableTask<T> implements Callable<T> {
-
-        private T uniqueID;
-        private MyRunnable r;
-
-        MyCallableTask(T uniqueID, MyRunnable r){
-            this.uniqueID = uniqueID;
-            this.r = r;
-        }
-
-        @Override
-        public T call() {
-            r.run();
-            r.clean();
-            return this.uniqueID;
-        }
-    }
-
     /**
      * This function takes a job, delegates the job to a private execute overloaded func
      * and returns the id of the job (to be spectated by the user)
