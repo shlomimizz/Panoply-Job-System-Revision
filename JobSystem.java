@@ -147,8 +147,12 @@ public class JobSystem {
             return scheduledJobs;
         }
 
-        Map<T, V> getJobMap() {
-            return jobMap;
+        Set<T> getAllJobs() {
+            return jobMap.keySet();
+        }
+
+        V getJob(T id){
+           return this.jobMap.get(id);
         }
 
         Set<T> getRunningThreads() {
@@ -209,9 +213,9 @@ public class JobSystem {
                 return scheduledJobToCancel.cancel();
             }
         }
-        else if (jobSystemStats.getJobMap().get(id) != null) {
+        else if (jobSystemStats.getJob(id) != null) {
             jobSystemStats.removeRunningThread(id);
-            return jobSystemStats.getJobMap().get(id).cancel(true);
+            return jobSystemStats.getJob(id).cancel(true);
            }
 
         return false;
@@ -225,7 +229,7 @@ public class JobSystem {
     public boolean cancelAllJobs() {
 
         Collection<String> jobIdsCollection = new HashSet<>(scheduledJobs.keySet());
-        jobIdsCollection.addAll(jobSystemStats.getJobMap().keySet());
+        jobIdsCollection.addAll(jobSystemStats.getAllJobs());
         for (String id : jobIdsCollection) {
             if (!cancelJob(id)) {
                 return false;
@@ -293,11 +297,11 @@ public class JobSystem {
             if (jobSystemStats.getScheduledJobs().contains(id)) {
                 return JobState.SCHEDULED;
             }
-            if (jobSystemStats.getJobMap().get(id)== null) {
+            if (jobSystemStats.getJob(id) == null) {
                 return JobState.DOES_NOT_EXIST;
             }
 
-            if (jobSystemStats.getJobMap().get(id).isCancelled()) {
+            if (jobSystemStats.getJob(id).isCancelled()) {
                 return JobState.CANCELLED;
             }
             if (jobSystemStats.getRunningThreads().contains(id)) {
